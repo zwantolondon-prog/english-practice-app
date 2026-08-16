@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "package": "grammar_basic",
+    "topic": "Simple Present",
+    "question": "She ___ to school every morning.",
+    "fullSentence": "She goes to school every morning.",
+    "translation": "Dia pergi ke sekolah setiap pagi.",
+    "options": ["go", "goes", "went", "going"],
+    "correct": 1,
+    "explanation": "Subjek tunggal 'She' pada Simple Present Tense menggunakan verb + s/es (goes)."
+  },
+  {
+    "id": 2,
+    "package": "grammar_basic",
+    "topic": "Past Tense",
+    "question": "They ___ to Bali last holiday.",
+    "fullSentence": "They went to Bali last holiday.",
+    "translation": "Mereka pergi ke Bali liburan lalu.",
+    "options": ["go", "goes", "went", "gone"],
+    "correct": 2,
+    "explanation": "Keterangan waktu 'last holiday' menandakan bentuk lampau / Simple Past (went)."
+  },
+  {
+    "id": 3,
+    "package": "vocab_intermediate",
+    "topic": "Synonyms",
+    "question": "What is the synonym of 'Abundant'?",
+    "fullSentence": "The synonym of abundant is plentiful.",
+    "translation": "Apa sinonim dari 'Abundant' (melimpah)?",
+    "options": ["Scarce", "Plentiful", "Tiny", "Empty"],
+    "correct": 1,
+    "explanation": "'Abundant' dan 'Plentiful' memiliki arti yang sama, yaitu berlimpah ruah."
+  },
+  {
+    "id": 4,
+    "package": "vocab_intermediate",
+    "topic": "Antonyms",
+    "question": "What is the opposite of 'Generous'?",
+    "fullSentence": "The opposite of generous is stingy.",
+    "translation": "Apa lawan kata dari 'Generous' (dermawan)?",
+    "options": ["Kind", "Helpful", "Stingy", "Friendly"],
+    "correct": 2,
+    "explanation": "Lawan kata dermawan adalah 'Stingy' (pelit/kikir)."
+  },
+  {
+    "id": 5,
+    "package": "grammar_basic",
+    "topic": "Passive Voice",
+    "question": "The novel ___ by J.K. Rowling in 1997.",
+    "fullSentence": "The novel was written by J.K. Rowling in 1997.",
+    "translation": "Novel tersebut ditulis oleh J.K. Rowling pada tahun 1997.",
+    "options": ["writes", "wrote", "was written", "is writing"],
+    "correct": 2,
+    "explanation": "Pola pasif lampau: was/were + Verb 3 (was written)."
+  }
+]
