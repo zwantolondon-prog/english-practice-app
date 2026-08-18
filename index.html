@@ -18,7 +18,7 @@
   <!-- 1. HALAMAN MENU DINAMIS -->
   <section id="menu-view" class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
     
-    <!-- Filter Jumlah Soal & Mode -->
+    <!-- Filter Jumlah Soal & Info DB -->
     <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
       <div>
         <label class="block text-[11px] font-bold uppercase text-slate-400">Jumlah Soal</label>
@@ -26,7 +26,7 @@
           <option value="10">10 Soal (Cepat)</option>
           <option value="20" selected>20 Soal (Standar)</option>
           <option value="50">50 Soal (Ujian)</option>
-          <option value="1000">Semua Soal</option>
+          <option value="5000">Semua Soal</option>
         </select>
       </div>
       <div class="text-right">
@@ -110,10 +110,14 @@
     let currentIdx = 0;
     let score = 0;
 
-    // 1. Muat seluruh data untuk memetakan kategori secara dinamis
+    // 1. Muat seluruh data (gunakan range agar mengambil hingga ribuan soal)
     async function initApp() {
       try {
-        const { data, error } = await supabaseClient.from('questions').select('*');
+        const { data, error } = await supabaseClient
+          .from('questions')
+          .select('*')
+          .range(0, 4999);
+
         if (error) throw error;
 
         allQuestionsData = data;
@@ -135,11 +139,11 @@
       container.innerHTML = "";
 
       // Dapatkan daftar kategori unik (package)
-      const packages = [...new Set(allQuestionsData.map(q => q.package))];
+      const packages = [...new Set(allQuestionsData.map(q => q.package))].filter(Boolean);
 
       packages.forEach(pkg => {
         const pkgQuestions = allQuestionsData.filter(q => q.package === pkg);
-        const topics = [...new Set(pkgQuestions.map(q => q.topic))];
+        const topics = [...new Set(pkgQuestions.map(q => q.topic))].filter(Boolean);
 
         const card = document.createElement('div');
         card.className = "border border-slate-200 rounded-xl p-3.5 bg-white hover:border-slate-300 transition flex flex-col gap-2";
@@ -151,7 +155,7 @@
             <button onclick="startQuiz('package', '${pkg}')" class="font-bold text-sm text-slate-800 hover:text-indigo-600 text-left">
               📚 ${formattedTitle}
             </button>
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">${pkgQuestions.length} Soal</span>
+            <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${pkgQuestions.length} Soal</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             ${topics.map(t => `
