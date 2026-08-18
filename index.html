@@ -3,22 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>English Practice Lab</title>
+  <title>English Practice Lab - Premium</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col items-center p-4">
 
-  <!-- Header -->
   <header class="w-full max-w-lg my-4 text-center">
     <h1 class="text-3xl font-extrabold text-indigo-600 tracking-tight">English Practice Lab</h1>
     <p class="text-xs text-slate-500 mt-1">Platform Latihan Soal & Simulasi Ujian Interaktif</p>
   </header>
 
-  <!-- 1. HALAMAN MENU -->
-  <section id="menu-view" class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
-    
-    <!-- Filter Jumlah Soal & Counter Real Database -->
+  <!-- 1. HALAMAN LOGIN / REGISTER -->
+  <section id="auth-view" class="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-4">
+    <div>
+      <h2 id="auth-title" class="text-lg font-bold text-slate-800">Masuk ke Akun Member</h2>
+      <p id="auth-desc" class="text-xs text-slate-500">Gunakan email dan password untuk mulai latihan</p>
+    </div>
+
+    <form id="auth-form" onsubmit="handleAuth(event)" class="flex flex-col gap-3">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+        <input type="email" id="auth-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+        <input type="password" id="auth-password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+      </div>
+
+      <div id="auth-error" class="hidden p-2.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl text-xs"></div>
+
+      <button type="submit" id="auth-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-sm mt-1">
+        Masuk
+      </button>
+    </form>
+
+    <div class="text-center pt-2 border-t border-slate-100">
+      <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-indigo-600 font-semibold hover:underline">
+        Belum punya akun? Daftar di sini
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. HALAMAN PEMBAYARAN / AKUN BELUM AKTIF -->
+  <section id="locked-view" class="hidden w-full max-w-md bg-white rounded-2xl shadow-sm border border-amber-200 p-6 flex flex-col gap-4 text-center">
+    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl mx-auto">
+      🔒
+    </div>
+    <div>
+      <h2 class="text-lg font-bold text-slate-800">Akses Premium Terkunci</h2>
+      <p class="text-xs text-slate-500 mt-1">Akun kamu belum memiliki status aktif untuk mengakses bank soal dan simulasi ujian.</p>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-left text-xs text-slate-700 flex flex-col gap-1.5">
+      <div class="font-bold text-amber-900">Keuntungan Akses Premium:</div>
+      <div>✅ 2.000+ Butir Soal Lengkap (Grammar, Vocab & TOEFL)</div>
+      <div>✅ Kunci Jawaban, Pembahasan & Audio Suara Native</div>
+      <div>✅ Mode Simulasi Tryout Ujian Tanpa Batas</div>
+    </div>
+
+    <!-- LINK CHECKOUT CLICKY.ID MILIKMU SUDAH TERPASANG -->
+    <a id="btn-clicky-checkout" href="https://clicky.id/en/zwanenglish/akses-premium-english-practice-lab-bank-soal-simulasi-ujian-interaktif" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm">
+      💳 Beli Akses Premium di Clicky.id
+    </a>
+
+    <button onclick="handleLogout()" class="text-xs text-slate-400 hover:text-rose-600 font-semibold mt-1">
+      Keluar / Ganti Akun
+    </button>
+  </section>
+
+  <!-- 3. HALAMAN MENU (Hanya untuk Member yang is_active = true) -->
+  <section id="menu-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">⭐</span>
+        <div>
+          <span id="user-display-email" class="text-xs font-semibold text-slate-700 block leading-tight">user@email.com</span>
+          <span class="text-[10px] text-emerald-600 font-bold uppercase">Member Premium Active</span>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-lg font-bold transition">
+        Keluar
+      </button>
+    </div>
+
     <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
       <div>
         <label class="block text-[11px] font-bold uppercase text-slate-400">Jumlah Soal</label>
@@ -26,16 +95,14 @@
           <option value="10">10 Soal (Cepat)</option>
           <option value="20" selected>20 Soal (Standar)</option>
           <option value="50">50 Soal (Ujian)</option>
-          <option value="100">100 Soal (Maraton)</option>
         </select>
       </div>
       <div class="text-right">
-        <span class="text-[11px] font-bold uppercase text-slate-400 block">Total Database</span>
-        <span id="total-db-count" class="text-sm font-extrabold text-indigo-600">Menghitung...</span>
+        <span class="text-[11px] font-bold uppercase text-slate-400 block">Status Akses</span>
+        <span class="text-sm font-extrabold text-emerald-600">● Premium Aktif</span>
       </div>
     </div>
 
-    <!-- Tombol Simulasi Ujian Tryout (Acak Semua) -->
     <div>
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Simulasi Lengkap</h2>
       <button onclick="startQuiz('all', 'all')" class="w-full flex items-center justify-between p-4 border-2 border-indigo-500 bg-indigo-50/50 hover:bg-indigo-100/50 rounded-xl transition text-left group">
@@ -50,18 +117,14 @@
       </button>
     </div>
 
-    <!-- Paket Kategori -->
     <div>
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Berdasarkan Kategori</h2>
-      <div id="category-list" class="flex flex-col gap-3">
-
-        <!-- 1. Grammar Basic -->
+      <div class="flex flex-col gap-3">
+        <!-- Grammar Basic -->
         <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <button onclick="startQuiz('package', 'grammar_basic')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
-              📘 GRAMMAR BASIC
-            </button>
-            <span id="count-grammar_basic" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
+            <button onclick="startQuiz('package', 'grammar_basic')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">📘 GRAMMAR BASIC</button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Dasar</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Simple Present')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Simple Present</button>
@@ -73,13 +136,11 @@
           </div>
         </div>
 
-        <!-- 2. Grammar Advanced -->
+        <!-- Grammar Advanced -->
         <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <button onclick="startQuiz('package', 'grammar_advanced')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
-              📕 GRAMMAR ADVANCED
-            </button>
-            <span id="count-grammar_advanced" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
+            <button onclick="startQuiz('package', 'grammar_advanced')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">📕 GRAMMAR ADVANCED</button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Lanjutan</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Conditional Sentences')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Conditional Sentences</button>
@@ -89,13 +150,11 @@
           </div>
         </div>
 
-        <!-- 3. Vocabulary Intermediate -->
+        <!-- Vocabulary Intermediate -->
         <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <button onclick="startQuiz('package', 'vocab_intermediate')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
-              📙 VOCABULARY INTERMEDIATE
-            </button>
-            <span id="count-vocab_intermediate" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
+            <button onclick="startQuiz('package', 'vocab_intermediate')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">📙 VOCABULARY INTERMEDIATE</button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Kosakata</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Synonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Synonyms</button>
@@ -104,13 +163,11 @@
           </div>
         </div>
 
-        <!-- 4. TOEFL Prep -->
+        <!-- TOEFL Prep -->
         <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <button onclick="startQuiz('package', 'toefl_prep')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
-              🎓 TOEFL & IELTS PREPARATION
-            </button>
-            <span id="count-toefl_prep" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
+            <button onclick="startQuiz('package', 'toefl_prep')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">🎓 TOEFL & IELTS PREPARATION</button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Ujian Resmi</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Academic Vocabulary')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Academic Vocab</button>
@@ -118,12 +175,11 @@
             <button onclick="startQuiz('topic', 'Academic Collocations')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Academic Collocations</button>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- 2. HALAMAN LATIHAN / KUIS -->
+  <!-- 4. HALAMAN KUIS -->
   <main id="quiz-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
     <div class="flex justify-between items-center text-xs font-semibold pb-3 border-b border-slate-100">
       <div class="flex items-center gap-2">
@@ -161,36 +217,111 @@
     const SUPABASE_ANON_KEY = "sb_publishable_Rwc3ayh7SApcqQ-QrlQ80Q_oJ7TorOK";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let isSignUpMode = false;
+    let currentUser = null;
     let activeQuestions = [];
     let currentIdx = 0;
     let score = 0;
 
-    // Menghitung jumlah soal di database dengan akurat tanpa terbatasi 1000 limit
-    async function loadDatabaseStats() {
+    async function checkAuthSession() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        await verifySubscriptionStatus();
+      } else {
+        showView('auth');
+      }
+    }
+
+    async function verifySubscriptionStatus() {
       try {
-        const { count: totalCount, error: errTotal } = await supabaseClient
-          .from('questions')
-          .select('*', { count: 'exact', head: true });
+        const { data, error } = await supabaseClient
+          .from('user_profiles')
+          .select('is_active')
+          .eq('id', currentUser.id)
+          .single();
 
-        if (!errTotal && totalCount !== null) {
-          document.getElementById('total-db-count').textContent = `${totalCount} Butir Soal`;
-        }
-
-        const packages = ['grammar_basic', 'grammar_advanced', 'vocab_intermediate', 'toefl_prep'];
-        for (const pkg of packages) {
-          const { count } = await supabaseClient
-            .from('questions')
-            .select('*', { count: 'exact', head: true })
-            .eq('package', pkg);
-
-          const el = document.getElementById(`count-${pkg}`);
-          if (el && count !== null) {
-            el.textContent = `${count} Soal`;
-          }
+        if (error || !data || data.is_active !== true) {
+          showView('locked');
+        } else {
+          document.getElementById('user-display-email').textContent = currentUser.email;
+          showView('menu');
         }
       } catch (e) {
-        console.error("Gagal memuat statistik:", e);
+        showView('locked');
       }
+    }
+
+    function showView(view) {
+      document.getElementById('auth-view').classList.add('hidden');
+      document.getElementById('locked-view').classList.add('hidden');
+      document.getElementById('menu-view').classList.add('hidden');
+      document.getElementById('quiz-view').classList.add('hidden');
+
+      if (view === 'auth') document.getElementById('auth-view').classList.remove('hidden');
+      if (view === 'locked') document.getElementById('locked-view').classList.remove('hidden');
+      if (view === 'menu') document.getElementById('menu-view').classList.remove('hidden');
+      if (view === 'quiz') document.getElementById('quiz-view').classList.remove('hidden');
+    }
+
+    function toggleAuthMode() {
+      isSignUpMode = !isSignUpMode;
+      const title = document.getElementById('auth-title');
+      const desc = document.getElementById('auth-desc');
+      const btn = document.getElementById('auth-btn');
+      const toggleBtn = document.getElementById('auth-toggle-btn');
+      const errBox = document.getElementById('auth-error');
+      errBox.classList.add('hidden');
+
+      if (isSignUpMode) {
+        title.textContent = "Buat Akun Member";
+        desc.textContent = "Daftarkan akunmu untuk berlangganan";
+        btn.textContent = "Daftar Akun";
+        toggleBtn.textContent = "Sudah punya akun? Masuk di sini";
+      } else {
+        title.textContent = "Masuk ke Akun Member";
+        desc.textContent = "Gunakan email dan password untuk mulai latihan";
+        btn.textContent = "Masuk";
+        toggleBtn.textContent = "Belum punya akun? Daftar di sini";
+      }
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errBox = document.getElementById('auth-error');
+      const btn = document.getElementById('auth-btn');
+      
+      errBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = "Memproses...";
+
+      try {
+        if (isSignUpMode) {
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+          alert("Pendaftaran berhasil! Silakan masuk ke akunmu.");
+          toggleAuthMode();
+        } else {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          currentUser = data.user;
+          await verifySubscriptionStatus();
+        }
+      } catch (err) {
+        errBox.textContent = err.message || "Gagal memproses autentikasi.";
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = isSignUpMode ? "Daftar Akun" : "Masuk";
+      }
+    }
+
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      showView('auth');
     }
 
     function shuffle(array) {
@@ -206,17 +337,13 @@
       const limit = parseInt(document.getElementById('limit-select').value) || 20;
       let query = supabaseClient.from('questions').select('*');
 
-      if (filterType === 'package') {
-        query = query.eq('package', filterValue);
-      } else if (filterType === 'topic') {
-        query = query.eq('topic', filterValue);
-      }
+      if (filterType === 'package') query = query.eq('package', filterValue);
+      else if (filterType === 'topic') query = query.eq('topic', filterValue);
 
       const { data, error } = await query.limit(500);
 
       if (error || !data || data.length === 0) {
-        alert("Gagal memuat soal untuk kategori ini. Pastikan data sudah di-import.");
-        console.error(error);
+        alert("Soal sedang disiapkan.");
         return;
       }
 
@@ -233,15 +360,12 @@
       currentIdx = 0;
       score = 0;
       document.getElementById("score-display").textContent = `Skor: 0`;
-      document.getElementById("menu-view").classList.add("hidden");
-      document.getElementById("quiz-view").classList.remove("hidden");
-      
+      showView('quiz');
       loadQuestion();
     }
 
     function backToMenu() {
-      document.getElementById("quiz-view").classList.add("hidden");
-      document.getElementById("menu-view").classList.remove("hidden");
+      showView('menu');
     }
 
     function loadQuestion() {
@@ -326,7 +450,7 @@
       }
     });
 
-    loadDatabaseStats();
+    checkAuthSession();
   </script>
 </body>
 </html>
