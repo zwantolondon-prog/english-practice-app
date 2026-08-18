@@ -15,10 +15,10 @@
     <p class="text-xs text-slate-500 mt-1">Platform Latihan Soal & Simulasi Ujian Interaktif</p>
   </header>
 
-  <!-- 1. HALAMAN MENU DINAMIS -->
+  <!-- 1. HALAMAN MENU -->
   <section id="menu-view" class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
     
-    <!-- Filter Jumlah Soal -->
+    <!-- Filter Jumlah Soal & Counter Real Database -->
     <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
       <div>
         <label class="block text-[11px] font-bold uppercase text-slate-400">Jumlah Soal</label>
@@ -30,8 +30,8 @@
         </select>
       </div>
       <div class="text-right">
-        <span class="text-[11px] font-bold uppercase text-slate-400 block">Status Database</span>
-        <span id="total-db-count" class="text-sm font-extrabold text-indigo-600">Terhubung</span>
+        <span class="text-[11px] font-bold uppercase text-slate-400 block">Total Database</span>
+        <span id="total-db-count" class="text-sm font-extrabold text-indigo-600">Menghitung...</span>
       </div>
     </div>
 
@@ -61,7 +61,7 @@
             <button onclick="startQuiz('package', 'grammar_basic')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
               📘 GRAMMAR BASIC
             </button>
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Dasar</span>
+            <span id="count-grammar_basic" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Simple Present')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Simple Present</button>
@@ -79,7 +79,7 @@
             <button onclick="startQuiz('package', 'grammar_advanced')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
               📕 GRAMMAR ADVANCED
             </button>
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Lanjutan</span>
+            <span id="count-grammar_advanced" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Conditional Sentences')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Conditional Sentences</button>
@@ -95,7 +95,7 @@
             <button onclick="startQuiz('package', 'vocab_intermediate')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
               📙 VOCABULARY INTERMEDIATE
             </button>
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Kosakata</span>
+            <span id="count-vocab_intermediate" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Synonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Synonyms</button>
@@ -110,7 +110,7 @@
             <button onclick="startQuiz('package', 'toefl_prep')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
               🎓 TOEFL & IELTS PREPARATION
             </button>
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Ujian Resmi</span>
+            <span id="count-toefl_prep" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">...</span>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
             <button onclick="startQuiz('topic', 'Academic Vocabulary')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Academic Vocab</button>
@@ -165,6 +165,34 @@
     let currentIdx = 0;
     let score = 0;
 
+    // Menghitung jumlah soal di database dengan akurat tanpa terbatasi 1000 limit
+    async function loadDatabaseStats() {
+      try {
+        const { count: totalCount, error: errTotal } = await supabaseClient
+          .from('questions')
+          .select('*', { count: 'exact', head: true });
+
+        if (!errTotal && totalCount !== null) {
+          document.getElementById('total-db-count').textContent = `${totalCount} Butir Soal`;
+        }
+
+        const packages = ['grammar_basic', 'grammar_advanced', 'vocab_intermediate', 'toefl_prep'];
+        for (const pkg of packages) {
+          const { count } = await supabaseClient
+            .from('questions')
+            .select('*', { count: 'exact', head: true })
+            .eq('package', pkg);
+
+          const el = document.getElementById(`count-${pkg}`);
+          if (el && count !== null) {
+            el.textContent = `${count} Soal`;
+          }
+        }
+      } catch (e) {
+        console.error("Gagal memuat statistik:", e);
+      }
+    }
+
     function shuffle(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -174,7 +202,6 @@
       return arr;
     }
 
-    // Ambil data langsung sesuai pilihan secara on-demand
     async function startQuiz(filterType, filterValue) {
       const limit = parseInt(document.getElementById('limit-select').value) || 20;
       let query = supabaseClient.from('questions').select('*');
@@ -185,11 +212,10 @@
         query = query.eq('topic', filterValue);
       }
 
-      // Ambil hingga batas yang diinginkan
-      const { data, error } = await query.limit(1000);
+      const { data, error } = await query.limit(500);
 
       if (error || !data || data.length === 0) {
-        alert("Soal untuk topik ini belum ditemukan atau sedang dimuat.");
+        alert("Gagal memuat soal untuk kategori ini. Pastikan data sudah di-import.");
         console.error(error);
         return;
       }
@@ -299,6 +325,8 @@
         };
       }
     });
+
+    loadDatabaseStats();
   </script>
 </body>
 </html>
