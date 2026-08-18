@@ -18,7 +18,7 @@
   <!-- 1. HALAMAN MENU DINAMIS -->
   <section id="menu-view" class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
     
-    <!-- Filter Jumlah Soal & Info DB -->
+    <!-- Filter Jumlah Soal -->
     <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
       <div>
         <label class="block text-[11px] font-bold uppercase text-slate-400">Jumlah Soal</label>
@@ -26,12 +26,12 @@
           <option value="10">10 Soal (Cepat)</option>
           <option value="20" selected>20 Soal (Standar)</option>
           <option value="50">50 Soal (Ujian)</option>
-          <option value="5000">Semua Soal</option>
+          <option value="100">100 Soal (Maraton)</option>
         </select>
       </div>
       <div class="text-right">
-        <span class="text-[11px] font-bold uppercase text-slate-400 block">Total Database</span>
-        <span id="total-db-count" class="text-sm font-extrabold text-indigo-600">Memuat...</span>
+        <span class="text-[11px] font-bold uppercase text-slate-400 block">Status Database</span>
+        <span id="total-db-count" class="text-sm font-extrabold text-indigo-600">Terhubung</span>
       </div>
     </div>
 
@@ -44,34 +44,95 @@
             <span class="text-base">🎯</span>
             <span class="font-bold text-sm text-indigo-900 group-hover:text-indigo-600">Simulasi Tryout Lengkap</span>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Mengacak gabungan semua grammar & kosakata dari database</p>
+          <p class="text-xs text-slate-500 mt-1">Mengacak gabungan seluruh paket dari database</p>
         </div>
         <span class="text-[11px] font-bold bg-indigo-600 text-white px-2.5 py-1 rounded-md shadow-sm">Mulai</span>
       </button>
     </div>
 
-    <!-- Paket Kategori Dinamis (Ditarik Otomatis dari Supabase) -->
+    <!-- Paket Kategori -->
     <div>
-      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Berdasarkan Kategori / Topik</h2>
-      <div id="category-list" class="flex flex-col gap-2.5">
-        <div class="p-4 text-center text-xs text-slate-400">Mengambil data bank soal...</div>
+      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Berdasarkan Kategori</h2>
+      <div id="category-list" class="flex flex-col gap-3">
+
+        <!-- 1. Grammar Basic -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <button onclick="startQuiz('package', 'grammar_basic')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
+              📘 GRAMMAR BASIC
+            </button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Dasar</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
+            <button onclick="startQuiz('topic', 'Simple Present')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Simple Present</button>
+            <button onclick="startQuiz('topic', 'Simple Past')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Simple Past</button>
+            <button onclick="startQuiz('topic', 'Present Continuous')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Present Continuous</button>
+            <button onclick="startQuiz('topic', 'Present Perfect')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Present Perfect</button>
+            <button onclick="startQuiz('topic', 'Passive Voice')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Passive Voice</button>
+            <button onclick="startQuiz('topic', 'Modal Verbs')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Modal Verbs</button>
+          </div>
+        </div>
+
+        <!-- 2. Grammar Advanced -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <button onclick="startQuiz('package', 'grammar_advanced')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
+              📕 GRAMMAR ADVANCED
+            </button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Paket Lanjutan</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
+            <button onclick="startQuiz('topic', 'Conditional Sentences')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Conditional Sentences</button>
+            <button onclick="startQuiz('topic', 'Gerunds & Infinitives')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Gerunds & Infinitives</button>
+            <button onclick="startQuiz('topic', 'Relative & Reduced Clauses')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Relative Clauses</button>
+            <button onclick="startQuiz('topic', 'Subjunctive & Inversion')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Inversion & Subjunctive</button>
+          </div>
+        </div>
+
+        <!-- 3. Vocabulary Intermediate -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <button onclick="startQuiz('package', 'vocab_intermediate')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
+              📙 VOCABULARY INTERMEDIATE
+            </button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Kosakata</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
+            <button onclick="startQuiz('topic', 'Synonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Synonyms</button>
+            <button onclick="startQuiz('topic', 'Antonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Antonyms</button>
+            <button onclick="startQuiz('topic', 'Idioms & Expressions')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Idioms & Expressions</button>
+          </div>
+        </div>
+
+        <!-- 4. TOEFL Prep -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-white flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <button onclick="startQuiz('package', 'toefl_prep')" class="font-bold text-sm text-slate-800 hover:text-indigo-600">
+              🎓 TOEFL & IELTS PREPARATION
+            </button>
+            <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Ujian Resmi</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
+            <button onclick="startQuiz('topic', 'Academic Vocabulary')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Academic Vocab</button>
+            <button onclick="startQuiz('topic', 'Structure & Written Expression')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Structure Expression</button>
+            <button onclick="startQuiz('topic', 'Academic Collocations')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-2.5 py-1 rounded-lg">Academic Collocations</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
   <!-- 2. HALAMAN LATIHAN / KUIS -->
   <main id="quiz-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
-    
-    <!-- Top Bar Status -->
     <div class="flex justify-between items-center text-xs font-semibold pb-3 border-b border-slate-100">
       <div class="flex items-center gap-2">
         <span id="topic-tag" class="bg-indigo-50 text-indigo-600 font-bold px-2.5 py-1 rounded-md">Grammar</span>
-        <span id="question-count" class="text-slate-400 font-medium">Soal 1 dari 10</span>
+        <span id="question-count" class="text-slate-400 font-medium">Soal 1</span>
       </div>
       <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold" id="score-display">Skor: 0</span>
     </div>
 
-    <!-- Kotak Soal & Audio -->
     <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
       <div class="flex items-start justify-between gap-3">
         <h2 id="question-text" class="text-base sm:text-lg font-semibold text-slate-800 leading-snug">Memuat soal...</h2>
@@ -82,13 +143,9 @@
       <p id="question-translation" class="text-xs text-slate-500 mt-2 pt-2 border-t border-slate-200/60 italic leading-relaxed">...</p>
     </div>
 
-    <!-- Pilihan Jawaban -->
     <div id="options-container" class="flex flex-col gap-2.5"></div>
-
-    <!-- Penjelasan / Pembahasan Feedback -->
     <div id="feedback-box" class="hidden p-4 rounded-xl text-sm leading-relaxed border"></div>
 
-    <!-- Navigasi -->
     <div class="flex gap-2 pt-2">
       <button onclick="backToMenu()" class="w-1/3 border border-slate-200 text-slate-600 font-semibold py-3 rounded-xl hover:bg-slate-50 transition text-sm">
         Menu
@@ -100,74 +157,13 @@
   </main>
 
   <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = "https://djxzfihwegavauocqrng.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_Rwc3ayh7SApcqQ-QrlQ80Q_oJ7TorOK";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let allQuestionsData = [];
     let activeQuestions = [];
     let currentIdx = 0;
     let score = 0;
-
-    // 1. Muat seluruh data (gunakan range agar mengambil hingga ribuan soal)
-    async function initApp() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('questions')
-          .select('*')
-          .range(0, 4999);
-
-        if (error) throw error;
-
-        allQuestionsData = data;
-        document.getElementById('total-db-count').textContent = `${data.length} Butir Soal`;
-        renderCategoryMenu();
-      } catch (err) {
-        console.error("Gagal membaca database:", err);
-        document.getElementById('category-list').innerHTML = `
-          <div class="p-3 bg-rose-50 text-rose-600 rounded-xl text-xs text-center border border-rose-200">
-            Gagal tersambung ke Supabase. Periksa koneksi atau Anon Key.
-          </div>
-        `;
-      }
-    }
-
-    // 2. Render Kategori & Topik secara otomatis
-    function renderCategoryMenu() {
-      const container = document.getElementById('category-list');
-      container.innerHTML = "";
-
-      // Dapatkan daftar kategori unik (package)
-      const packages = [...new Set(allQuestionsData.map(q => q.package))].filter(Boolean);
-
-      packages.forEach(pkg => {
-        const pkgQuestions = allQuestionsData.filter(q => q.package === pkg);
-        const topics = [...new Set(pkgQuestions.map(q => q.topic))].filter(Boolean);
-
-        const card = document.createElement('div');
-        card.className = "border border-slate-200 rounded-xl p-3.5 bg-white hover:border-slate-300 transition flex flex-col gap-2";
-
-        // Judul Paket
-        const formattedTitle = pkg.replace(/_/g, ' ').toUpperCase();
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <button onclick="startQuiz('package', '${pkg}')" class="font-bold text-sm text-slate-800 hover:text-indigo-600 text-left">
-              📚 ${formattedTitle}
-            </button>
-            <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${pkgQuestions.length} Soal</span>
-          </div>
-          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
-            ${topics.map(t => `
-              <button onclick="startQuiz('topic', '${t}')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-slate-600 px-2.5 py-1 rounded-lg transition">
-                ${t}
-              </button>
-            `).join('')}
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
 
     function shuffle(array) {
       const arr = [...array];
@@ -178,26 +174,27 @@
       return arr;
     }
 
-    // 3. Mulai Kuis
-    function startQuiz(filterType, filterValue) {
-      let filtered = [];
+    // Ambil data langsung sesuai pilihan secara on-demand
+    async function startQuiz(filterType, filterValue) {
       const limit = parseInt(document.getElementById('limit-select').value) || 20;
+      let query = supabaseClient.from('questions').select('*');
 
-      if (filterType === 'all') {
-        filtered = [...allQuestionsData];
-      } else if (filterType === 'package') {
-        filtered = allQuestionsData.filter(q => q.package === filterValue);
+      if (filterType === 'package') {
+        query = query.eq('package', filterValue);
       } else if (filterType === 'topic') {
-        filtered = allQuestionsData.filter(q => q.topic === filterValue);
+        query = query.eq('topic', filterValue);
       }
 
-      if (filtered.length === 0) {
-        alert("Belum ada soal untuk kategori ini!");
+      // Ambil hingga batas yang diinginkan
+      const { data, error } = await query.limit(1000);
+
+      if (error || !data || data.length === 0) {
+        alert("Soal untuk topik ini belum ditemukan atau sedang dimuat.");
+        console.error(error);
         return;
       }
 
-      // Format dan potong sesuai limit
-      activeQuestions = shuffle(filtered).slice(0, limit).map(item => ({
+      activeQuestions = shuffle(data).slice(0, limit).map(item => ({
         topic: item.topic,
         question: item.question,
         fullSentence: item.full_sentence,
@@ -302,9 +299,6 @@
         };
       }
     });
-
-    // Jalankan inisialisasi awal
-    initApp();
   </script>
 </body>
 </html>
