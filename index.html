@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>English Practice Lab</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col items-center p-4">
 
   <!-- Header -->
   <header class="w-full max-w-md my-4 text-center">
     <h1 class="text-2xl font-bold text-indigo-600">English Practice Lab</h1>
-    <p class="text-xs text-slate-500">Platform latihan soal & simulasi ujian</p>
+    <p class="text-xs text-slate-500">Platform latihan soal & simulasi ujian (Supabase Live)</p>
   </header>
 
   <!-- 1. HALAMAN MENU PAKET SOAL -->
   <section id="menu-view" class="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col gap-4">
     <div>
       <h2 class="text-base font-bold text-slate-800">Pilih Paket Latihan</h2>
-      <p class="text-xs text-slate-500">Soal dan opsi diacak otomatis setiap sesi</p>
+      <p class="text-xs text-slate-500">Soal dan opsi diacak otomatis dari database</p>
     </div>
 
     <div class="flex flex-col gap-3">
@@ -37,7 +39,7 @@
           <span class="font-bold text-sm text-indigo-700">🎯 Mode Simulasi Ujian (Acak Semua)</span>
           <span class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded font-bold">Tryout</span>
         </div>
-        <span class="text-xs text-slate-500 mt-1">Mengacak gabungan seluruh paket dari bank soal</span>
+        <span class="text-xs text-slate-500 mt-1">Mengacak gabungan seluruh paket dari database</span>
       </button>
     </div>
   </section>
@@ -83,24 +85,15 @@
   </main>
 
   <script>
-    let questionsDatabase = [];
+    // Konfigurasi Supabase Project Kamu
+    const SUPABASE_URL = "https://djxzfihwegavauocqrng.supabase.co"; 
+    const SUPABASE_ANON_KEY = "sb_publishable_Rwc3ayh7SApcqQ-QrlQ80Q_oJ7TorOK";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     let activeQuestions = [];
     let currentIdx = 0;
     let score = 0;
-
-    // Mengambil bank soal dari file questions.json
-    async function loadQuestionsFromJSON() {
-      try {
-        const response = await fetch('./questions.json');
-        if (!response.ok) throw new Error('Gagal memuat file questions.json');
-        questionsDatabase = await response.json();
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    }
-
-    // Jalankan pengambilan data saat halaman dibuka
-    loadQuestionsFromJSON();
 
     function shuffle(array) {
       const arr = [...array];
@@ -112,22 +105,29 @@
     }
 
     async function startQuiz(packageName) {
-      // Jika data belum sempat termuat, tunggu fetch selesai
-      if (questionsDatabase.length === 0) {
-        await loadQuestionsFromJSON();
+      let query = supabaseClient.from('questions').select('*');
+
+      if (packageName !== 'all') {
+        query = query.eq('package', packageName);
       }
 
-      if (packageName === 'all') {
-        activeQuestions = shuffle(questionsDatabase);
-      } else {
-        const filtered = questionsDatabase.filter(q => q.package === packageName);
-        activeQuestions = shuffle(filtered.length > 0 ? filtered : questionsDatabase);
-      }
+      const { data, error } = await query;
 
-      if (activeQuestions.length === 0) {
-        alert("Belum ada soal untuk paket ini di questions.json!");
+      if (error || !data || data.length === 0) {
+        alert("Gagal memuat soal dari database Supabase. Pastikan koneksi aman.");
+        console.error("Supabase Error:", error);
         return;
       }
+
+      activeQuestions = shuffle(data.map(item => ({
+        topic: item.topic,
+        question: item.question,
+        fullSentence: item.full_sentence,
+        translation: item.translation,
+        options: Array.isArray(item.options) ? item.options : JSON.parse(item.options),
+        correct: item.correct,
+        explanation: item.explanation
+      })));
 
       currentIdx = 0;
       score = 0;
