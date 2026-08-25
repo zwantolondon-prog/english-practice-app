@@ -265,7 +265,6 @@
         currentUser = session.user;
         await verifySubscriptionStatus();
       } else {
-        // JIKA TIDAK ADA SESI LOGIN, LANGSUNG TAMPILKAN FORM TRIAL
         showView('trial');
       }
     }
@@ -294,11 +293,10 @@
       // --- LOGIKA GANTI SUBTITLE DINAMIS ---
       const subtitle = document.getElementById('header-subtitle');
       if (subtitle) {
-        if (view === 'menu' || view === 'locked') {
-          // Saat masuk halaman member / locked
+        // Jika sedang di menu member, akun terkunci, ATAU sedang kuis tapi BUKAN trial
+        if (view === 'menu' || view === 'locked' || (view === 'quiz' && !isTrialMode)) {
           subtitle.textContent = "Platform Belajar Interaktif Khusus Member";
         } else {
-          // Saat berada di halaman trial / login / kuis
           subtitle.textContent = "Placement Test & Platform Belajar Interaktif";
         }
       }
@@ -382,11 +380,10 @@
       btn.disabled = true;
 
       try {
-        // Mengambil soal secara Anonim
         const { data, error } = await supabaseClient.from('questions').select('*').limit(100);
         
         if (error || !data || data.length === 0) {
-          alert("Gagal mengambil soal. PENTING: Pastikan pengaturan database Supabase (RLS) diatur ke Public agar kuis Trial bisa diakses tanpa login.");
+          alert("Gagal mengambil soal. Pastikan pengaturan database Supabase (RLS) diatur ke Public.");
           btn.textContent = "Mulai Test Sekarang 🚀";
           btn.disabled = false;
           return;
@@ -396,8 +393,8 @@
           topic: item.topic,
           question: item.question,
           translation: item.translation,
-          options: Array.isArray(item.options) ? item.options : JSON.parse(item.options),
-          correct: item.correct,
+          options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
+          correct: parseInt(item.correct), 
           explanation: item.explanation
         }));
 
@@ -416,20 +413,18 @@
       }
     }
 
-    // 🔥 TAMBAHAN BARU: FUNGSI MEMULAI KUIS UNTUK MEMBER PREMIUM
+    // FUNGSI MEMULAI KUIS UNTUK MEMBER PREMIUM
     async function startQuiz(type, value) {
-      isTrialMode = false;
+      isTrialMode = false; // Pastikan status trial mati saat member main
       const limit = parseInt(document.getElementById('limit-select').value) || 20;
       
       try {
         let query = supabaseClient.from('questions').select('*');
         
-        // Filter berdasarkan topik jika tidak memilih "Tryout Lengkap"
         if (type === 'topic') {
           query = query.eq('topic', value);
         }
         
-        // Ambil data (limit 100 agar bisa diacak dengan baik)
         const { data, error } = await query.limit(100);
         
         if (error || !data || data.length === 0) {
@@ -441,8 +436,8 @@
           topic: item.topic,
           question: item.question,
           translation: item.translation,
-          options: Array.isArray(item.options) ? item.options : JSON.parse(item.options),
-          correct: item.correct,
+          options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
+          correct: parseInt(item.correct),
           explanation: item.explanation
         }));
 
@@ -478,7 +473,17 @@
 
     function loadQuestion() {
       const current = activeQuestions[currentIdx];
-      document.getElementById("topic-tag").textContent = "Diagnostic Test";
+      
+      // --- LOGIKA MENYEMBUNYIKAN LABEL DIAGNOSTIC TEST ---
+      const topicTag = document.getElementById("topic-tag");
+      if (isTrialMode) {
+        topicTag.textContent = "Diagnostic Test";
+        topicTag.classList.remove("hidden"); // Muncul saat trial
+      } else {
+        topicTag.classList.add("hidden"); // Sembunyi saat member main
+      }
+      // ----------------------------------------------------
+
       document.getElementById("question-text").textContent = current.question;
       document.getElementById("question-translation").textContent = current.translation || "";
       document.getElementById("question-count").textContent = `Soal ${currentIdx + 1} dari ${activeQuestions.length}`;
@@ -515,11 +520,11 @@
         document.getElementById("score-display").textContent = `Skor: ${score}`;
         selectedBtn.classList.add("bg-emerald-50", "border-emerald-500", "text-emerald-700", "font-bold");
         feedbackBox.className = "p-3.5 rounded-xl text-sm bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-sm";
-        feedbackBox.innerHTML = `✅ <b>Benar!</b>`;
+        feedbackBox.innerHTML = `✅ <b>Benar!</b><br><span class="text-xs text-emerald-600 block mt-1">${current.explanation || ""}</span>`;
       } else {
         selectedBtn.classList.add("bg-rose-50", "border-rose-500", "text-rose-700", "font-bold");
         feedbackBox.className = "p-3.5 rounded-xl text-sm bg-rose-50 text-rose-800 border border-rose-200 shadow-sm";
-        feedbackBox.innerHTML = `❌ <b>Salah.</b> Jawaban yang tepat: <b>${current.options[current.correct]}</b>`;
+        feedbackBox.innerHTML = `❌ <b>Salah.</b> Jawaban yang tepat: <b>${current.options[current.correct]}</b><br><span class="text-xs text-rose-600 block mt-1">${current.explanation || ""}</span>`;
       }
       document.getElementById("btn-next").classList.remove("hidden");
     }
@@ -531,6 +536,7 @@
       } else {
         // --- LOGIK KETIKA KUIS SELESAI ---
         document.getElementById("topic-tag").textContent = "Hasil Akhir";
+        document.getElementById("topic-tag").classList.remove("hidden"); // Tampilkan label "Hasil Akhir"
         document.getElementById("question-text").textContent = "Test Selesai! 🎉";
         document.getElementById("question-translation").textContent = "";
         document.getElementById("feedback-box").classList.add("hidden");
@@ -551,17 +557,17 @@
             <hr class="my-3 border-slate-100">
             <p class="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wide">Pilih langkah belajarmu selanjutnya:</p>
 
-            <!-- OPSI 1: KELAS PRIVAT (MENGARAH KE CLICKY) -->
+            <!-- OPSI 1: KELAS PRIVAT -->
             <a href="https://clicky.id/en/redirect/promo-page?product=6a7d202de6b98d99a3e6e9a0" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
               👨‍🏫 Daftar Kelas Privat 1-on-1
             </a>
 
-            <!-- OPSI 2: TRIAL CLASS (MENGARAH KE WHATSAPP ADMIN) -->
+            <!-- OPSI 2: TRIAL CLASS (KONSULTASI VIA WA) -->
             <a href="https://wa.me/${ADMIN_WA}?text=Halo%20Admin%20Zwan%20English!%20Saya%20${userNameText}.%20Skor%20Trial%20Test%20saya%20${score}.%20Saya%20tertarik%20untuk%20mengikuti%20*Sesi%20Trial%20Class/Konsultasi*,%20bagaimana%20caranya?" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
               🎯 Ikut Trial Class (Konsultasi via WA)
             </a>
 
-            <!-- OPSI 3: BELAJAR MANDIRI (MENGARAH KE CLICKY) -->
+            <!-- OPSI 3: BELAJAR MANDIRI -->
             <a href="https://clicky.id/en/redirect/promo-page?product=6a8473ea7cdc04d8c02d0f02" target="_blank" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
               📚 Beli Akses Web Belajar Mandiri
             </a>
