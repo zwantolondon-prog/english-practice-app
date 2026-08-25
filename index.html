@@ -9,9 +9,10 @@
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col items-center p-4">
 
+  <!-- HEADER -->
   <header class="w-full max-w-lg my-6 text-center">
     <h1 class="text-3xl font-extrabold text-indigo-600 tracking-tight">Zwan English</h1>
-    <p class="text-sm text-slate-500 mt-1 font-medium">Placement Test & Platform Belajar Interaktif</p>
+    <p id="header-subtitle" class="text-sm text-slate-500 mt-1 font-medium">Placement Test & Platform Belajar Interaktif</p>
   </header>
 
   <!-- 0. HALAMAN UTAMA: QUICK TRIAL (LEAD MAGNET) -->
@@ -127,8 +128,6 @@
     </div>
   </section>
 
-  <!-- MODAL GANTI PASSWORD BISA DITAMBAHKAN KEMBALI DI SINI JIKA PERLU -->
-
   <!-- 4. HALAMAN KUIS (Digunakan oleh Trial & Premium) -->
   <main id="quiz-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
     <div class="flex justify-between items-center text-xs font-semibold pb-4 border-b border-slate-100">
@@ -208,6 +207,19 @@
       document.getElementById('locked-view').classList.add('hidden');
       document.getElementById('menu-view').classList.add('hidden');
       document.getElementById('quiz-view').classList.add('hidden');
+
+      // --- LOGIKA GANTI SUBTITLE DINAMIS ---
+      const subtitle = document.getElementById('header-subtitle');
+      if (subtitle) {
+        if (view === 'menu' || view === 'locked') {
+          // Saat masuk halaman member / locked
+          subtitle.textContent = "Platform Belajar Interaktif Khusus Member";
+        } else {
+          // Saat berada di halaman trial / login / kuis
+          subtitle.textContent = "Placement Test & Platform Belajar Interaktif";
+        }
+      }
+      // -------------------------------------
 
       if (view === 'trial') document.getElementById('trial-view').classList.remove('hidden');
       if (view === 'auth') document.getElementById('auth-view').classList.remove('hidden');
