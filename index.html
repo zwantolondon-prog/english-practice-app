@@ -580,11 +580,24 @@
         document.getElementById("topic-tag").textContent = "Selesai";
         document.getElementById("question-text").textContent = "Latihan Selesai!";
         document.getElementById("question-translation").textContent = `Total skor kamu: ${score} dari ${activeQuestions.length * 10}`;
-        document.getElementById("options-container").innerHTML = "";
+        
+        // --- MULAI KODE CTA WHATSAPP ---
+        document.getElementById("options-container").innerHTML = `
+          <div class="mt-2 p-5 bg-emerald-50 border border-emerald-200 rounded-xl text-center flex flex-col gap-3 shadow-sm">
+            <h3 class="font-bold text-emerald-800 text-sm">🎉 Kuis Selesai! Penasaran dengan levelmu?</h3>
+            <p class="text-xs text-emerald-700 leading-relaxed">
+              Screenshot hasil skormu ini dan kirim ke Admin Zwan English untuk mendapatkan <b>Rapor Evaluasi Level Gratis</b> & Klaim Promo Spesial Kelas Privat!
+            </p>
+            <a href="https://wa.me/628XXXXXXXXXX?text=Halo%20Admin%20Zwan%20English!%20Saya%20sudah%20selesai%20mengerjakan%20Mini-Quiz.%20Berikut%20saya%20lampirkan%20screenshot%20hasilnya.%20Boleh%20minta%20Rapor%20Evaluasi%20Level%20dan%20info%20promo%20kelasnya?" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2 mt-1">
+              <span class="text-lg">💬</span> Kirim Hasil ke WhatsApp
+            </a>
+          </div>
+        `;
+        // --- AKHIR KODE CTA WHATSAPP ---
         
         const feedbackBox = document.getElementById("feedback-box");
         feedbackBox.className = "p-4 rounded-xl text-center bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200";
-        feedbackBox.innerHTML = `🎉 Selamat! Kamu telah menyelesaikan sesi kuis.<br>Skor Akhir: <b>${score}</b>`;
+        feedbackBox.innerHTML = `Skor Akhir Kamu: <b class="text-lg">${score}</b>`;
         feedbackBox.classList.remove("hidden");
         
         const btnNext = document.getElementById("btn-next");
