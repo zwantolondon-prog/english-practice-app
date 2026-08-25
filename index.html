@@ -104,7 +104,9 @@
   </section>
 
   <!-- 3. HALAMAN MENU (Hanya untuk Member Premium) -->
-  <section id="menu-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-5">
+  <section id="menu-view" class="hidden w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col gap-6">
+    
+    <!-- Header Profile -->
     <div class="flex items-center justify-between pb-4 border-b border-slate-100">
       <div class="flex items-center gap-2.5">
         <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">⭐</span>
@@ -116,15 +118,96 @@
       <button onclick="handleLogout()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-2 rounded-lg font-bold transition">Keluar</button>
     </div>
 
+    <!-- Pilihan Jumlah Soal & Status Akses -->
+    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Jumlah Soal</label>
+        <select id="limit-select" class="bg-transparent font-bold text-sm text-slate-700 outline-none cursor-pointer">
+          <option value="10">10 Soal (Cepat)</option>
+          <option value="20" selected>20 Soal (Standar)</option>
+          <option value="50">50 Soal (Ujian)</option>
+        </select>
+      </div>
+      <div class="text-right">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Status Akses</span>
+        <span class="text-sm font-extrabold text-emerald-600">● Premium Aktif</span>
+      </div>
+    </div>
+
+    <!-- Simulasi Lengkap -->
     <div>
       <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Simulasi Lengkap</h2>
       <button onclick="startQuiz('all', 'all')" class="w-full flex items-center justify-between p-4 border-2 border-indigo-500 bg-indigo-50/50 hover:bg-indigo-100/50 rounded-xl transition text-left group shadow-sm">
         <div>
-          <span class="font-bold text-sm text-indigo-900 group-hover:text-indigo-700 transition">🎯 Tryout Acak Lengkap</span>
-          <p class="text-xs text-slate-500 mt-1">Campuran seluruh materi (Grammar & Vocab)</p>
+          <span class="font-bold text-sm text-indigo-900 group-hover:text-indigo-700 transition">🎯 Simulasi Tryout Lengkap</span>
+          <p class="text-xs text-slate-500 mt-1">Mengacak gabungan seluruh paket dari database</p>
         </div>
         <span class="text-[11px] font-bold bg-indigo-600 text-white px-3 py-1.5 rounded-md shadow-sm">Mulai</span>
       </button>
+    </div>
+
+    <!-- Pilih Berdasarkan Kategori -->
+    <div>
+      <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Pilih Berdasarkan Kategori</h2>
+      <div class="flex flex-col gap-4">
+        
+        <!-- 1. Grammar Basic -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col gap-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="font-bold text-sm text-slate-800">📘 GRAMMAR BASIC</span>
+            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Paket Dasar</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="startQuiz('topic', 'Simple Present')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Simple Present</button>
+            <button onclick="startQuiz('topic', 'Simple Past')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Simple Past</button>
+            <button onclick="startQuiz('topic', 'Present Continuous')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Present Continuous</button>
+            <button onclick="startQuiz('topic', 'Present Perfect')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Present Perfect</button>
+            <button onclick="startQuiz('topic', 'Passive Voice')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Passive Voice</button>
+            <button onclick="startQuiz('topic', 'Modal Verbs')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Modal Verbs</button>
+          </div>
+        </div>
+
+        <!-- 2. Grammar Advanced -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col gap-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="font-bold text-sm text-slate-800">📕 GRAMMAR ADVANCED</span>
+            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Paket Lanjutan</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="startQuiz('topic', 'Conditional Sentences')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Conditional Sentences</button>
+            <button onclick="startQuiz('topic', 'Gerunds & Infinitives')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Gerunds & Infinitives</button>
+            <button onclick="startQuiz('topic', 'Relative Clauses')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Relative Clauses</button>
+            <button onclick="startQuiz('topic', 'Inversion & Subjunctive')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Inversion & Subjunctive</button>
+          </div>
+        </div>
+
+        <!-- 3. Vocabulary Intermediate -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col gap-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="font-bold text-sm text-slate-800">📙 VOCABULARY INTERMEDIATE</span>
+            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Kosakata</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="startQuiz('topic', 'Synonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Synonyms</button>
+            <button onclick="startQuiz('topic', 'Antonyms')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Antonyms</button>
+            <button onclick="startQuiz('topic', 'Idioms & Expressions')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Idioms & Expressions</button>
+          </div>
+        </div>
+
+        <!-- 4. TOEFL & IELTS Preparation -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col gap-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="font-bold text-sm text-slate-800">🎓 TOEFL & IELTS PREPARATION</span>
+            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Ujian Resmi</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="startQuiz('topic', 'Academic Vocab')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Academic Vocab</button>
+            <button onclick="startQuiz('topic', 'Structure Expression')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Structure Expression</button>
+            <button onclick="startQuiz('topic', 'Academic Collocations')" class="text-[11px] bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-medium transition">Academic Collocations</button>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
