@@ -416,6 +416,48 @@
       }
     }
 
+    // 🔥 TAMBAHAN BARU: FUNGSI MEMULAI KUIS UNTUK MEMBER PREMIUM
+    async function startQuiz(type, value) {
+      isTrialMode = false;
+      const limit = parseInt(document.getElementById('limit-select').value) || 20;
+      
+      try {
+        let query = supabaseClient.from('questions').select('*');
+        
+        // Filter berdasarkan topik jika tidak memilih "Tryout Lengkap"
+        if (type === 'topic') {
+          query = query.eq('topic', value);
+        }
+        
+        // Ambil data (limit 100 agar bisa diacak dengan baik)
+        const { data, error } = await query.limit(100);
+        
+        if (error || !data || data.length === 0) {
+          alert("Maaf, soal untuk kategori ini belum tersedia.");
+          return;
+        }
+
+        activeQuestions = shuffle(data).slice(0, limit).map(item => ({
+          topic: item.topic,
+          question: item.question,
+          translation: item.translation,
+          options: Array.isArray(item.options) ? item.options : JSON.parse(item.options),
+          correct: item.correct,
+          explanation: item.explanation
+        }));
+
+        currentIdx = 0;
+        score = 0;
+        document.getElementById("score-display").textContent = `Skor: 0`;
+        
+        showView('quiz');
+        loadQuestion();
+        
+      } catch (err) {
+        alert("Terjadi kesalahan saat memuat soal.");
+      }
+    }
+
     function shuffle(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
