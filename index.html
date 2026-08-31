@@ -375,22 +375,25 @@
     // FUNGSI MENYIMPAN LEAD KE TABEL 'leads' DI SUPABASE
     async function saveLeadToDatabase() {
       try {
-        const { data, error } = await supabaseClient
+        // ID dibuat di browser (bukan minta balik dari server) supaya kita TIDAK perlu
+        // policy SELECT publik di tabel leads (yang berisi email & WA orang lain).
+        const newId = crypto.randomUUID();
+
+        const { error } = await supabaseClient
           .from('leads')
           .insert({
+            id: newId,
             name: trialUser.name,
             email: trialUser.email,
             whatsapp: trialUser.wa,
             status: 'baru'
-          })
-          .select('id')
-          .single();
+          });
 
         if (error) {
           console.error('Gagal menyimpan lead:', error.message);
           return null;
         }
-        return data.id;
+        return newId;
       } catch (err) {
         console.error('Error saat menyimpan lead:', err);
         return null;
