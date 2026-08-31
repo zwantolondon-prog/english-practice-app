@@ -254,6 +254,7 @@
     let currentUser = null;
     let isTrialMode = false;
     let trialUser = { name: "", email: "", wa: "" };
+    let currentLeadId = null;
     
     let activeQuestions = [];
     let currentIdx = 0;
@@ -371,6 +372,44 @@
       showView('trial');
     }
 
+    // FUNGSI MENYIMPAN LEAD KE TABEL 'leads' DI SUPABASE
+    async function saveLeadToDatabase() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('leads')
+          .insert({
+            name: trialUser.name,
+            email: trialUser.email,
+            whatsapp: trialUser.wa,
+            status: 'baru'
+          })
+          .select('id')
+          .single();
+
+        if (error) {
+          console.error('Gagal menyimpan lead:', error.message);
+          return null;
+        }
+        return data.id;
+      } catch (err) {
+        console.error('Error saat menyimpan lead:', err);
+        return null;
+      }
+    }
+
+    // FUNGSI UPDATE SKOR AKHIR KE LEAD YANG SUDAH TERSIMPAN
+    async function updateLeadResult(leadId, finalScore, finalLevel) {
+      if (!leadId) return;
+      try {
+        await supabaseClient
+          .from('leads')
+          .update({ score: finalScore, level: finalLevel })
+          .eq('id', leadId);
+      } catch (err) {
+        console.error('Gagal update hasil lead:', err);
+      }
+    }
+
     // FUNGSI MEMULAI TRIAL (TANPA LOGIN)
     async function startTrialQuiz(e) {
       e.preventDefault();
@@ -384,6 +423,10 @@
       btn.disabled = true;
 
       try {
+        // Simpan lead ke database SEBELUM soal dimuat, agar data tetap tercatat
+        // walau user menutup halaman di tengah jalan
+        currentLeadId = await saveLeadToDatabase();
+
         const { data, error } = await supabaseClient.from('questions').select('*').limit(100);
         
         if (error || !data || data.length === 0) {
@@ -550,6 +593,11 @@
         let level = "A1 (Beginner)";
         if(score >= 40 && score <= 70) level = "A2 (Elementary)";
         if(score > 70) level = "B1 (Intermediate)";
+
+        // Update hasil trial (skor & level) ke lead yang sudah tersimpan di database
+        if (isTrialMode) {
+          updateLeadResult(currentLeadId, score, level);
+        }
 
         let userNameText = isTrialMode ? trialUser.name : "Kak";
 
